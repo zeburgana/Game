@@ -19,7 +19,7 @@ public class GreitaveikosTyrimas {
     public static final String FINISH_COMMAND = "finish";
     private static final ResourceBundle MESSAGES = ResourceBundle.getBundle("laborai.gui.messages");
 
-    private static final String[] TYRIMU_VARDAI = {"addBstRec", "addBstIte", "addAvlRec", "removeBst"};
+    private static final String[] TYRIMU_VARDAI = {"addBstRec", "addBstIte", "addAvlRec", "removeBst", "containsTree", "containsHash", "removeTree", "removeHash"};
     private static final int[] TIRIAMI_KIEKIAI = {10000, 20000, 40000, 80000};
 
     private final BlockingQueue resultsLogger = new SynchronousQueue();
@@ -58,6 +58,10 @@ public class GreitaveikosTyrimas {
         try {
             for (int k : TIRIAMI_KIEKIAI) {
                 VaizdoKortos[] vaizdoMas = VaizduskiuGamyba.generuotiIrIsmaisyti(k, 1.0);
+                for (int i = 0; i<k; i++){
+                    integerTreeSet.add(i);
+                    integerHashSet.add(i);
+                }
                 aSeries.clear();
                 aSeries2.clear();
                 aSeries3.clear();
@@ -79,6 +83,22 @@ public class GreitaveikosTyrimas {
                     aSeries.remove(v);
                 }
                 tk.finish(TYRIMU_VARDAI[3]);
+                for (int i = 0; i<k; i++){
+                    integerTreeSet.contains(i);
+                }
+                tk.finish(TYRIMU_VARDAI[4]);
+                for (int i = 0; i<k; i++){
+                    integerHashSet.contains(i);
+                }
+                tk.finish(TYRIMU_VARDAI[5]);
+                for (int i = 0; i<k; i++){
+                    integerTreeSet.remove(i);
+                }
+                tk.finish(TYRIMU_VARDAI[6]);
+                for (int i = 0; i<k; i++){
+                    integerHashSet.remove(i);
+                }
+                tk.finish(TYRIMU_VARDAI[7]);
                 tk.seriesFinish();
             }
             tk.logResult(FINISH_COMMAND);

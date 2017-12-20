@@ -3,9 +3,9 @@ package laborai.gui.fx;
 import laborai.gui.MyException;
 import laborai.studijosktu.AvlSetKTUx;
 import laborai.studijosktu.BstSetKTUx;
-import laborai.demo.AutoGamyba;
-import laborai.demo.Automobilis;
-import laborai.demo.GreitaveikosTyrimas;
+import laborai.lab3Galkinas.VaizduskiuGamyba;
+import laborai.lab3Galkinas.VaizdoKortos;
+import laborai.lab3Galkinas.GreitaveikosTyrimas;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -95,7 +95,7 @@ public class Lab3WindowFX extends BorderPane implements EventHandler<ActionEvent
     private MenuFX menuFX;
     private final Stage stage;
 
-    private static SortedSetADTx<Automobilis> autoSet;
+    private static SortedSetADTx<VaizdoKortos> videoSet;
     private int sizeOfInitialSubSet, sizeOfGenSet, sizeOfLeftSubSet;
     private double coef;
     private final String[] errors;
@@ -307,31 +307,31 @@ public class Lab3WindowFX extends BorderPane implements EventHandler<ActionEvent
         // cmbTreeType objekte
         createTree();
 
-        Automobilis[] autoArray;
+        VaizdoKortos[] videoArray;
         // Jei failas nenurodytas - generuojama
         if (filePath == null) {
-            autoArray = AutoGamyba.generuotiIrIsmaisyti(sizeOfGenSet, sizeOfInitialSubSet, coef);
+            videoArray = VaizduskiuGamyba.generuotiIrIsmaisyti(sizeOfGenSet, sizeOfInitialSubSet, coef);
             paneParam1.getTfOfTable().get(2).setText(String.valueOf(sizeOfLeftSubSet));
         } else { // Skaitoma is failo
-            autoSet.load(filePath);
-            autoArray = new Automobilis[autoSet.size()];
+            videoSet.load(filePath);
+            videoArray = new VaizdoKortos[videoSet.size()];
             int i = 0;
-            for (Object o : autoSet.toArray()) {
-                autoArray[i++] = (Automobilis) o;
+            for (Object o : videoSet.toArray()) {
+                videoArray[i++] = (VaizdoKortos) o;
             }
             // Skaitant iš failo išmaišoma standartiniu Collections.shuffle metodu.
-            Collections.shuffle(Arrays.asList(autoArray), new Random());
+            Collections.shuffle(Arrays.asList(videoArray), new Random());
         }
 
         // Išmaišyto masyvo elementai surašomi i aibę
-        autoSet.clear();
-        for (Automobilis a : autoArray) {
-            autoSet.add(a);
+        videoSet.clear();
+        for (VaizdoKortos a : videoArray) {
+            videoSet.add(a);
         }
         // Išvedami rezultatai
         // Nustatoma, kad eilutės pradžioje neskaičiuotų išvedamų eilučių skaičiaus
         KsFX.setFormatStartOfLine(true);
-        KsFX.oun(taOutput, autoSet.toVisualizedString(tfDelimiter.getText()),
+        KsFX.oun(taOutput, videoSet.toVisualizedString(tfDelimiter.getText()),
                 MESSAGES.getString("msg5"));
         // Nustatoma, kad eilutės pradžioje skaičiuotų išvedamų eilučių skaičių
         KsFX.setFormatStartOfLine(false);
@@ -340,35 +340,35 @@ public class Lab3WindowFX extends BorderPane implements EventHandler<ActionEvent
 
     private void treeAdd() throws MyException {
         KsFX.setFormatStartOfLine(true);
-        Automobilis auto = AutoGamyba.gautiIsBazes();
-        autoSet.add(auto);
+        VaizdoKortos auto = VaizduskiuGamyba.gautiIsBazes();
+        videoSet.add(auto);
         paneParam1.getTfOfTable().get(2).setText(String.valueOf(--sizeOfLeftSubSet));   
         KsFX.oun(taOutput, auto, MESSAGES.getString("msg7"));
-        KsFX.oun(taOutput, autoSet.toVisualizedString(tfDelimiter.getText()));
+        KsFX.oun(taOutput, videoSet.toVisualizedString(tfDelimiter.getText()));
         KsFX.setFormatStartOfLine(false);
     }
 
     private void treeRemove() {
         KsFX.setFormatStartOfLine(true);
-        if (autoSet.isEmpty()) {
+        if (videoSet.isEmpty()) {
             KsFX.ounerr(taOutput, MESSAGES.getString("msg4"));
-            KsFX.oun(taOutput, autoSet.toVisualizedString(tfDelimiter.getText()));
+            KsFX.oun(taOutput, videoSet.toVisualizedString(tfDelimiter.getText()));
         } else {
-            int nr = new Random().nextInt(autoSet.size());
-            Automobilis auto = (Automobilis) autoSet.toArray()[nr];
-            autoSet.remove(auto);
+            int nr = new Random().nextInt(videoSet.size());
+            VaizdoKortos auto = (VaizdoKortos) videoSet.toArray()[nr];
+            videoSet.remove(auto);
             KsFX.oun(taOutput, auto, MESSAGES.getString("msg6"));
-            KsFX.oun(taOutput, autoSet.toVisualizedString(tfDelimiter.getText()));
+            KsFX.oun(taOutput, videoSet.toVisualizedString(tfDelimiter.getText()));
         }
         KsFX.setFormatStartOfLine(false);
     }
 
     private void treeIteration() {
         KsFX.setFormatStartOfLine(true);
-        if (autoSet.isEmpty()) {
+        if (videoSet.isEmpty()) {
             KsFX.ounerr(taOutput, MESSAGES.getString("msg4"));
         } else {
-            KsFX.oun(taOutput, autoSet, MESSAGES.getString("msg8"));
+            KsFX.oun(taOutput, videoSet, MESSAGES.getString("msg8"));
         }
         KsFX.setFormatStartOfLine(false);
     }
@@ -433,10 +433,10 @@ public class Lab3WindowFX extends BorderPane implements EventHandler<ActionEvent
     private void createTree() throws MyException {
         switch (cmbTreeType.getSelectionModel().getSelectedIndex()) {
             case 0:
-                autoSet = new BstSetKTUx(new Automobilis());
+                videoSet = new BstSetKTUx(new VaizdoKortos());
                 break;
             case 1:
-                autoSet = new AvlSetKTUx(new Automobilis());
+                videoSet = new AvlSetKTUx(new VaizdoKortos());
                 break;
             default:
                 disableButtons(true);

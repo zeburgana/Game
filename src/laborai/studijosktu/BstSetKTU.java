@@ -345,7 +345,172 @@ public class BstSetKTU<E extends Comparable<E>> implements SortedSetADT<E>, Clon
      */
     @Override
     public SetADT<E> headSet(E element) {
-        throw new UnsupportedOperationException("Studentams reikia realizuoti headSet()");
+        if (root == null || root == element)
+            return null;
+        BstSetKTU<E> cl = new BstSetKTU<>();
+
+        headSetR(cl, root, element);
+//        for (E el : this) {
+//            if(el == element)
+//                break;
+//            cl.add(el);
+//        }
+        return cl;
+    }
+
+    private void headSetR(BstSetKTU<E> cl, BstNode<E> parent, E e) {
+        if(parent.element != e){
+            if(parent.left != null)
+                headSetR(cl, parent.left, e);
+            else if(parent.right != null)
+                headSetR(cl, parent.right, e);
+            cl.add(parent.element);
+        }
+    }
+
+    /**
+     * adds all elements from given set to base set
+     * @param c set which elements to put
+     * @return true if added successfully
+     */
+    public boolean addAll(BstSetKTU<? extends E> c) {
+        addAllR((BstNode<E>) c.root);
+//        for(E el : c){
+//            this.add(el);
+//        }
+        return true;
+    }
+
+    private void addAllR(BstNode<E> parent) {
+        if(parent.left != null)
+            addAllR(parent.left);
+        else if(parent.right != null)
+            addAllR(parent.right);
+        this.add(parent.element);
+    }
+
+    /**
+     * checks if base set contains all elements in given set
+     * @param c set which elements base set should contain
+     * @return true if base set contains all elements in c set, false otherwise
+     */
+    public boolean containsAll(BstSetKTU<? extends E> c) {
+        return containsAllR(root);
+    }
+
+    private boolean containsAllR (BstNode<E> cur) {
+        boolean all = true;
+        if(!this.contains(cur.element))
+            return false;
+        if(cur.left != null)
+            all = containsAllR(cur.left);
+        else if(cur.right != null)
+            if(all)
+                all = containsAllR(cur.right);
+        return all;
+    }
+
+    /**
+     * Returns the least element in this set greater than or equal to the given element, or null if there is no such element.
+     * @param e given element
+     * @return element the least greater than e or null if no such
+     */
+    public E ceiling(E e) {
+        if(e == null)
+            return null;
+        return ceilingR(e, root);
+    }
+
+    private E ceilingR (E e, BstNode<E> cur) {
+        E toRet = null;
+        if(cur.left != null)
+            toRet = ceilingR(e, cur.left);
+        if(toRet == null){
+            if(cur.element.compareTo(e) >= 0)
+                return cur.element;
+            else if(cur.right != null)
+                toRet = ceilingR(e, cur.right);
+        }
+        return toRet;
+    }
+
+    /**
+     * Returns the greatest element in this set less than or equal to the given element, or null if there is no such element.
+     * @param e given element
+     * @return element the greatest but less than e or null if no such
+     */
+    public E floor(E e) {
+        if(e == null)
+            return null;
+        return floorR(e, root);
+    }
+
+    private E floorR (E e, BstNode<E> cur) {
+        int cmp = cur.element.compareTo(e);
+        if(cmp == 0)
+            return cur.element;
+        else if(cmp < 0) { // look for greater
+            if(cur.right != null)
+                return floorR(e, cur.right);
+            return cur.element;
+        }
+        else if(cur.left != null) //look for smaller
+            return floorR(e, cur.left);
+        return null;
+    }
+
+    /**
+     * return greater element than given or null if no such element
+     * @param e given element
+     * @return element greater than given or null if no such
+     */
+    public E higher(E e) {
+        if(e == null)
+            return null;
+        return higherR(e, root);
+    }
+
+    private E higherR(E e, BstNode<E> cur) {
+        E toRet = null;
+        if(cur.left != null)
+            toRet = higherR(e, cur.left);
+        if(toRet == null){
+            if(cur.element.compareTo(e) > 0)
+                return cur.element;
+            else if(cur.right != null)
+                toRet = higherR(e, cur.right);
+        }
+        return toRet;
+    }
+
+    /**
+     * returns last element and removes it from set
+     * @return last highest element
+     */
+
+    public E pollLast(){
+        BstNode<E> last = root;
+        BstNode<E> prev = root;
+        if(last == null)
+            return null;
+        while(last.right != null){
+            prev = last;
+            last = last.right;
+        }
+        E toReturn = last.element;
+        if(last.left != null){
+            last.element = last.left.element;
+            last.right = last.left.right;
+            last.left = last.left.left;
+        }
+        else if (last == root){
+            root = null;
+        }
+        else {
+            prev.right = null;
+        }
+        size--;
+        return toReturn;
     }
 
     /**
@@ -357,18 +522,40 @@ public class BstSetKTU<E extends Comparable<E>> implements SortedSetADT<E>, Clon
      */
     @Override
     public SetADT<E> subSet(E element1, E element2) {
-        throw new UnsupportedOperationException("Studentams reikia realizuoti subSet()");
+        if(element1 == null || element2 == null)
+            return null;
+        BstSetKTU<E> cl = new BstSetKTU<E>();
+        boolean put = false;
+        for (E el : this) {
+            if(el == element1)
+                put = true;
+            if(el == element2)
+                break;
+            if(put)
+                cl.add(el);
+        }
+        return cl;
     }
 
     /**
-     * Grąžinamas aibės poaibis iki elemento.
+     * Grąžinamas aibės poaibis nuo elemento.
      *
      * @param element - Aibės elementas.
      * @return Grąžinamas aibės poaibis nuo elemento.
      */
     @Override
     public SetADT<E> tailSet(E element) {
-        throw new UnsupportedOperationException("Studentams reikia realizuoti tailSet()");
+        if(element == null)
+            return null;
+        BstSetKTU<E> cl = new BstSetKTU<E>();
+        boolean put = false;
+        for (E el : this) {
+            if(el == element)
+                put = true;
+            if(put)
+                cl.add(el);
+        }
+        return cl;
     }
 
     /**
@@ -405,6 +592,7 @@ public class BstSetKTU<E extends Comparable<E>> implements SortedSetADT<E>, Clon
         private boolean ascending;
         // Nurodo einamojo medžio elemento tėvą. Reikalingas šalinimui.
         private BstNode<E> parent = root;
+        private BstNode<E> cur = root;
 
         IteratorKTU(boolean ascendingOrder) {
             this.ascending = ascendingOrder;
@@ -420,14 +608,14 @@ public class BstSetKTU<E extends Comparable<E>> implements SortedSetADT<E>, Clon
         public E next() {
             if (!stack.empty()) {
                 // Grąžinamas paskutinis į steką patalpintas elementas
-                BstNode<E> n = stack.pop();
+                cur = stack.pop();
                 // Atsimenama tėvo viršunė. Reikia remove() metodui
                 parent = (!stack.empty()) ? stack.peek() : root;
-                BstNode node = (ascending) ? n.right : n.left;
+                BstNode node = (ascending) ? cur.right : cur.left;
                 // Dešiniajame n pomedyje ieškoma minimalaus elemento,
                 // o visi paieškos kelyje esantys elementai talpinami į steką
                 toStack(node);
-                return n.element;
+                return cur.element;
             } else { // Jei stekas tuščias
                 return null;
             }
@@ -435,8 +623,73 @@ public class BstSetKTU<E extends Comparable<E>> implements SortedSetADT<E>, Clon
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("Studentams reikia realizuoti remove()");
+            BstNode cn = (ascending) ? parent.left : parent.right;
+            if(cur == root){
+                root = remove(root);
+            }
+            else if(cn == null){
+                return;
+            }
+            else if(cn == cur){
+                if(ascending)
+                    parent.left = remove(parent.left);
+                else
+                    parent.right = remove(parent.right);
+            }else{
+                if(parent != root)
+                    parent = cn;
+                while(((ascending) ? parent.right : parent.left) != cur){
+                    parent = (ascending) ? parent.right : parent.left;
+                }
+                if(ascending)
+                    parent.right = remove(parent.right);
+                else
+                    parent.left = remove(parent.left);
+            }
         }
+
+        private BstNode remove(BstNode n){
+            if(((ascending) ? n.left.right : n.right.left) == null) {
+                if(ascending){
+                    n.left.right = n.right;
+                    return n.left;
+                } else {
+                    n.right.left = n.left;
+                    return n.right;
+                }
+            }
+            else {
+                BstNode rep = getMax(((ascending) ? n.left : n.right));
+                rep.left = n.left;
+                rep.right = n.right;
+                return rep;
+            }
+        }
+        boolean	removeAll(BstSetKTU<?> c){
+            boolean removed = false;
+            if(c.isEmpty())
+                return removed;
+            else {
+                c.clear();
+                removed = true;
+            }
+            return removed;
+        }
+
+        private BstNode getMax(BstNode n){
+            BstNode prev = n;
+            while(((ascending) ? n.right : n.left) != null){
+                prev = n;
+                n = ((ascending) ? n.right : n.left);
+            }
+            if(ascending){
+                prev.right = n.left;
+            } else {
+                prev.left = n.right;
+            }
+            return n;
+        }
+
 
         private void toStack(BstNode<E> n) {
             while (n != null) {

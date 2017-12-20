@@ -6,7 +6,10 @@ import laborai.studijosktu.AvlSetKTUx;
 import laborai.studijosktu.SortedSetADTx;
 import laborai.studijosktu.BstSetKTUx;
 import laborai.gui.MyException;
+
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.SynchronousQueue;
@@ -27,6 +30,8 @@ public class GreitaveikosTyrimas {
     private final SortedSetADTx<VaizdoKortos> aSeries = new BstSetKTUx(new VaizdoKortos(), VaizdoKortos.pagalKaina);
     private final SortedSetADTx<VaizdoKortos> aSeries2 = new BstSetKTUx2(new VaizdoKortos());
     private final SortedSetADTx<VaizdoKortos> aSeries3 = new AvlSetKTUx(new VaizdoKortos());
+    private final TreeSet<Integer> integerTreeSet = new TreeSet<Integer>();
+    private final HashSet<Integer> integerHashSet = new HashSet<Integer>();
 
     public GreitaveikosTyrimas() {
         semaphore.release();
